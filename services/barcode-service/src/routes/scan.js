@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { lookupBarcode } = require('../api/openFoodFacts');
+const { lookupBarcode } = require('../api/barcodeDatabase');
 
 // POST /scan - Upload image/barcode and get product info
 router.post('/scan', async (req, res) => {
@@ -12,11 +12,6 @@ router.post('/scan', async (req, res) => {
     }
 
     const productInfo = await lookupBarcode(barcode);
-    
-    if (!productInfo) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-
     res.json(productInfo);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -28,11 +23,6 @@ router.get('/lookup/:barcode', async (req, res) => {
   try {
     const { barcode } = req.params;
     const productInfo = await lookupBarcode(barcode);
-    
-    if (!productInfo) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-
     res.json(productInfo);
   } catch (error) {
     res.status(500).json({ error: error.message });
