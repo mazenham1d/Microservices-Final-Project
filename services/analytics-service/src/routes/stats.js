@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const Log = require('../models/Log');
+const inMemoryStore = require('../inMemoryStore');
 
 // GET /stats - Get aggregated statistics
 router.get('/', async (req, res) => {
   try {
-    const totalRequests = await Log.countDocuments();
-    const errorRequests = await Log.countDocuments({ statusCode: { $gte: 400 } });
-    const avgResponseTime = await Log.aggregate([
+    const totalRequests = inMemoryStore.countLogs();
+    const errorRequests = inMemoryStore.countLogs({ statusCode: { $gte: 400 } });
+    const avgResponseTime = inMemoryStore.aggregate([
       { $group: { _id: null, avg: { $avg: '$responseTime' } } }
     ]);
 
@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
 // GET /stats/endpoints - Request count by endpoint
 router.get('/endpoints', async (req, res) => {
   try {
-    const endpointStats = await Log.aggregate([
+    const endpointStats = inMemoryStore.aggregate([
       {
         $group: {
           _id: { endpoint: '$endpoint', method: '$method' },
@@ -40,7 +40,7 @@ router.get('/endpoints', async (req, res) => {
     const formatted = endpointStats.map(stat => ({
       endpoint: `${stat._id.method} ${stat._id.endpoint}`,
       count: stat.count,
-      avgResponseTime: stat.avgResponseTime.toFixed(2)
+      avgResponseTime: (stat.avgResponseTime || 0).toFixed(2)
     }));
 
     res.json(formatted);
@@ -52,7 +52,7 @@ router.get('/endpoints', async (req, res) => {
 // GET /stats/users - Request count by user
 router.get('/users', async (req, res) => {
   try {
-    const userStats = await Log.aggregate([
+    const userStats = inMemoryStore.aggregate([
       {
         $group: {
           _id: '$user',
@@ -74,7 +74,7 @@ router.get('/users', async (req, res) => {
 // GET /stats/errors - Error rate statistics
 router.get('/errors', async (req, res) => {
   try {
-    const errorStats = await Log.aggregate([
+    const errorStats = inMemoryStore.aggregate([
       {
         $match: { statusCode: { $gte: 400 } }
       },
