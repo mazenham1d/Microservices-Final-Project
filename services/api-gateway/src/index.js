@@ -21,20 +21,20 @@ app.get('/health', (req, res) => {
 });
 
 // Auth routes
-app.use('/api/auth', authMiddleware, authRouter);
+app.use('/auth', authMiddleware, authRouter);
 
 // All other routes require authentication
 app.use(authMiddleware);
 app.use(analyticsMiddleware);
 
 // Pantry routes
-app.use('/api/pantry', pantryRouter);
+app.use('/pantry', pantryRouter);
 
 // Recipe routes
-app.use('/api/recipes', recipesRouter);
+app.use('/recipes', recipesRouter);
 
 // Admin routes (require admin role)
-app.use('/api/admin', requireAdmin, adminRouter);
+app.use('/admin', requireAdmin, adminRouter);
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
