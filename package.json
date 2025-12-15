@@ -1,0 +1,20 @@
+{
+  "name": "smart-pantry",
+  "version": "1.0.0",
+  "description": "Microservices-based Smart Pantry Management System",
+  "scripts": {
+    "start": "echo 'This is a monorepo - services are in ./services/ and ./client/'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mazenham1d/Microservices-Final-Project"
+  },
+  "keywords": [
+    "microservices",
+    "docker",
+    "mongodb",
+    "react"
+  ],
+  "author": "Mazen Hamid",
+  "license": "MIT"
+}
