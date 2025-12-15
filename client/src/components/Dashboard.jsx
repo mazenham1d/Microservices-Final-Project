@@ -4,6 +4,7 @@ import { api } from '../services/api';
 import Scanner from './Scanner';
 import ItemList from './ItemList';
 import AdminAnalytics from './AdminAnalytics';
+import RecipeSuggestions from './RecipeSuggestions';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -12,6 +13,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [showScanner, setShowScanner] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [activeTab, setActiveTab] = useState('pantry');
   const [filter, setFilter] = useState({ location: '', category: '' });
 
   const loadItems = async () => {
@@ -82,55 +84,78 @@ const Dashboard = () => {
           <AdminAnalytics />
         )}
 
-        <div className="dashboard-actions">
+        <div className="tabs">
           <button
-            className="btn btn-primary"
-            onClick={() => setShowScanner(!showScanner)}
+            className={`tab ${activeTab === 'pantry' ? 'active' : ''}`}
+            onClick={() => setActiveTab('pantry')}
           >
-            {showScanner ? 'Cancel Scan' : 'Scan Barcode'}
+            My Pantry
+          </button>
+          <button
+            className={`tab ${activeTab === 'recipes' ? 'active' : ''}`}
+            onClick={() => setActiveTab('recipes')}
+          >
+            Recipe Ideas
           </button>
         </div>
 
-        {showScanner && (
-          <Scanner
-            onItemAdded={handleItemAdded}
-            onCancel={() => setShowScanner(false)}
-          />
+        {activeTab === 'pantry' && (
+          <>
+            <div className="dashboard-actions">
+              <button
+                className="btn btn-primary"
+                onClick={() => setShowScanner(!showScanner)}
+              >
+                {showScanner ? 'Cancel Scan' : 'Scan Barcode'}
+              </button>
+            </div>
+
+            {showScanner && (
+              <Scanner
+                onItemAdded={handleItemAdded}
+                onCancel={() => setShowScanner(false)}
+              />
+            )}
+
+            <div className="filters">
+              <div className="form-group">
+                <label>Filter by Location:</label>
+                <select
+                  value={filter.location}
+                  onChange={(e) => setFilter({ ...filter, location: e.target.value })}
+                >
+                  <option value="">All Locations</option>
+                  {locations.map(loc => (
+                    <option key={loc} value={loc}>{loc}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Filter by Category:</label>
+                <select
+                  value={filter.category}
+                  onChange={(e) => setFilter({ ...filter, category: e.target.value })}
+                >
+                  <option value="">All Categories</option>
+                  {categories.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <ItemList
+              items={filteredItems}
+              loading={loading}
+              onItemDeleted={handleItemDeleted}
+              onItemUpdated={handleItemUpdated}
+            />
+          </>
         )}
 
-        <div className="filters">
-          <div className="form-group">
-            <label>Filter by Location:</label>
-            <select
-              value={filter.location}
-              onChange={(e) => setFilter({ ...filter, location: e.target.value })}
-            >
-              <option value="">All Locations</option>
-              {locations.map(loc => (
-                <option key={loc} value={loc}>{loc}</option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Filter by Category:</label>
-            <select
-              value={filter.category}
-              onChange={(e) => setFilter({ ...filter, category: e.target.value })}
-            >
-              <option value="">All Categories</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <ItemList
-          items={filteredItems}
-          loading={loading}
-          onItemDeleted={handleItemDeleted}
-          onItemUpdated={handleItemUpdated}
-        />
+        {activeTab === 'recipes' && (
+          <RecipeSuggestions />
+        )}
       </div>
     </div>
   );

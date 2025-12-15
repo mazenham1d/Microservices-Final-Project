@@ -58,6 +58,12 @@ export const api = {
     const instance = createAxiosInstance(username, password);
     const response = await instance.get('/api/admin/analytics');
     return response.data;
+  },
+
+  getRecipeSuggestions: async (username, password) => {
+    const instance = createAxiosInstance(username, password);
+    const response = await instance.post('/api/recipes/suggestions');
+    return response.data;
   }
 };
 

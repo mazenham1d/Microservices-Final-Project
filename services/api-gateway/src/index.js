@@ -6,6 +6,7 @@ const analyticsMiddleware = require('./middleware/analytics');
 const pantryRouter = require('./routes/pantry');
 const adminRouter = require('./routes/admin');
 const authRouter = require('./routes/auth');
+const recipesRouter = require('./routes/recipes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +29,9 @@ app.use(analyticsMiddleware);
 
 // Pantry routes
 app.use('/api/pantry', pantryRouter);
+
+// Recipe routes
+app.use('/api/recipes', recipesRouter);
 
 // Admin routes (require admin role)
 app.use('/api/admin', requireAdmin, adminRouter);

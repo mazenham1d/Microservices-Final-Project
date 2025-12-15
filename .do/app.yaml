@@ -1,0 +1,123 @@
+name: smart-pantry
+region: nyc
+
+# Managed MongoDB Database
+databases:
+  - name: inventory-db
+    engine: MONGODB
+    version: "7"
+    production: false
+  - name: analytics-db
+    engine: MONGODB
+    version: "7"
+    production: false
+
+services:
+  # API Gateway
+  - name: api-gateway
+    github:
+      repo: yourusername/your-repo-name
+      branch: main
+      deploy_on_push: true
+    source_dir: services/api-gateway
+    dockerfile_path: services/api-gateway/Dockerfile
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    envs:
+      - key: PORT
+        value: "3000"
+      - key: INVENTORY_SERVICE_URL
+        value: ${inventory-service.PRIVATE_URL}
+      - key: ANALYTICS_SERVICE_URL
+        value: ${analytics-service.PRIVATE_URL}
+      - key: BARCODE_SERVICE_URL
+        value: ${barcode-service.PRIVATE_URL}
+      - key: RECIPE_SERVICE_URL
+        value: ${recipe-service.PRIVATE_URL}
+    routes:
+      - path: /api
+      - path: /health
+
+  # Inventory Service
+  - name: inventory-service
+    github:
+      repo: yourusername/your-repo-name
+      branch: main
+      deploy_on_push: true
+    source_dir: services/inventory-service
+    dockerfile_path: services/inventory-service/Dockerfile
+    http_port: 3001
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    envs:
+      - key: PORT
+        value: "3001"
+      - key: MONGODB_URI
+        value: ${inventory-db.DATABASE_URL}
+
+  # Analytics Service
+  - name: analytics-service
+    github:
+      repo: yourusername/your-repo-name
+      branch: main
+      deploy_on_push: true
+    source_dir: services/analytics-service
+    dockerfile_path: services/analytics-service/Dockerfile
+    http_port: 3002
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    envs:
+      - key: PORT
+        value: "3002"
+      - key: MONGODB_URI
+        value: ${analytics-db.DATABASE_URL}
+
+  # Barcode Service
+  - name: barcode-service
+    github:
+      repo: yourusername/your-repo-name
+      branch: main
+      deploy_on_push: true
+    source_dir: services/barcode-service
+    dockerfile_path: services/barcode-service/Dockerfile
+    http_port: 3003
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    envs:
+      - key: PORT
+        value: "3003"
+
+  # Recipe Service (AI-powered)
+  - name: recipe-service
+    github:
+      repo: yourusername/your-repo-name
+      branch: main
+      deploy_on_push: true
+    source_dir: services/recipe-service
+    dockerfile_path: services/recipe-service/Dockerfile
+    http_port: 3005
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    envs:
+      - key: PORT
+        value: "3005"
+      - key: OPENAI_API_KEY
+        value: "YOUR_OPENAI_API_KEY_HERE"
+        type: SECRET
+
+# Static Site for React Frontend
+static_sites:
+  - name: web-client
+    github:
+      repo: yourusername/your-repo-name
+      branch: main
+      deploy_on_push: true
+    source_dir: client
+    dockerfile_path: client/Dockerfile
+    output_dir: /usr/share/nginx/html
+    routes:
+      - path: /
+    envs:
+      - key: VITE_API_URL
+        value: ${api-gateway.PUBLIC_URL}
