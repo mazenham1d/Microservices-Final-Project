@@ -16,7 +16,7 @@ services:
   # API Gateway
   - name: api-gateway
     github:
-      repo: yourusername/your-repo-name
+      repo: mazenham1d/Microservices-Final-Project
       branch: main
       deploy_on_push: true
     source_dir: services/api-gateway
@@ -42,7 +42,7 @@ services:
   # Inventory Service
   - name: inventory-service
     github:
-      repo: yourusername/your-repo-name
+      repo: mazenham1d/Microservices-Final-Project
       branch: main
       deploy_on_push: true
     source_dir: services/inventory-service
@@ -59,7 +59,7 @@ services:
   # Analytics Service
   - name: analytics-service
     github:
-      repo: yourusername/your-repo-name
+      repo: mazenham1d/Microservices-Final-Project
       branch: main
       deploy_on_push: true
     source_dir: services/analytics-service
@@ -76,7 +76,7 @@ services:
   # Barcode Service
   - name: barcode-service
     github:
-      repo: yourusername/your-repo-name
+      repo: mazenham1d/Microservices-Final-Project
       branch: main
       deploy_on_push: true
     source_dir: services/barcode-service
@@ -91,7 +91,7 @@ services:
   # Recipe Service (AI-powered)
   - name: recipe-service
     github:
-      repo: yourusername/your-repo-name
+      repo: mazenham1d/Microservices-Final-Project
       branch: main
       deploy_on_push: true
     source_dir: services/recipe-service
@@ -110,7 +110,7 @@ services:
 static_sites:
   - name: web-client
     github:
-      repo: yourusername/your-repo-name
+      repo: mazenham1d/Microservices-Final-Project
       branch: main
       deploy_on_push: true
     source_dir: client
